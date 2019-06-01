@@ -1,6 +1,7 @@
 import fire
 import requests
 
+from multiprocessing import Pool
 
 URL_TEMPLATE = "http://info.dla.go.th/public/surveyInfo.do?cmd=surveyForm&orgInfoId={key}"
 
@@ -8,22 +9,29 @@ YEARS = [2015, 2016, 2017, 2018, 2019]
 YINDX = dict(zip(YEARS, range(3, 3 + len(YEARS))))
 ORG_IDS_FILE = "./data/local-governor-ids.txt"
 
+
+BASE_DIR = "./outputs/budgets"
+
 def _build_key(year, org_id):
     return "%s%s" % (year, "%04d" % int(org_id))
 
-def scrape_year(year, trial=None, dry_run=False):
+def scrape_year(year, trial=None, dry_run=False, pool_size=5):
     with open(ORG_IDS_FILE, "r") as f:
-        for org_id in f:
-            text = scrape_year_org(year, org_id)
+        org_ids = f.readlines()[:trial]
 
-            if not dry_run:
-                # save to gstorage
-                pass
+    year_org_ids = map(lambda x: (year, x.strip()), org_ids)
 
-            if trial == 0:
-                break
-            else:
-                trial -= 1
+    with Pool(pool_size) as p:
+        p.map(do_job, year_org_ids)
+
+    p.join()
+
+def do_job(args):
+    year, org_id = args
+    text = scrape_year_org(year, org_id)
+
+    with open("%s/%s/%s.html" % (BASE_DIR, year, org_id), "w") as f:
+        f.write(text)
 
 
 def scrape_year_org(year, org_id):
