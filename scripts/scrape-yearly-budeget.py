@@ -15,6 +15,12 @@ BASE_DIR = "./outputs/budgets"
 def _build_key(year, org_id):
     return "%s%s" % (year, "%04d" % int(org_id))
 
+
+def scrape_years(years, trial=None, dry_run=False, pool_size=10):
+    for y in years:
+        print("Working on Y=%s" % y)
+        scrape_year(y, trial=trial, dry_run=dry_run, pool_size=pool_size)
+
 def scrape_year(year, trial=None, dry_run=False, pool_size=5):
     with open(ORG_IDS_FILE, "r") as f:
         org_ids = f.readlines()[:trial]
@@ -24,7 +30,7 @@ def scrape_year(year, trial=None, dry_run=False, pool_size=5):
     with Pool(pool_size) as p:
         p.map(do_job, year_org_ids)
 
-    p.join()
+    return p.join()
 
 def do_job(args):
     year, org_id = args
@@ -46,6 +52,7 @@ def scrape_year_org(year, org_id):
 
 if __name__ == "__main__":
     fire.Fire({
+        "years": scrape_years,
         "year": scrape_year,
         "year-org": scrape_year_org
     })
