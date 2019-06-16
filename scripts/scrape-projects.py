@@ -5,6 +5,7 @@ import pandas as pd
 
 from multiprocessing import Pool
 
+MAX_RETRIES = 5
 LIMIT = 50
 URL =  "https://govspendingapi.data.go.th/api/service/cgdcontract"
 
@@ -16,6 +17,9 @@ def get_all(params, retries=0):
     req = requests.get(URL, params)
     print("-> req ", params)
     if not req:
+        if retries > MAX_RETRIES:
+            print("Tried this request more than %d times" % MAX_RETRIES, params)
+            return []
         retries += 1
         print("Retry %d" % retries)
         return get_all(params, retries=retries)
