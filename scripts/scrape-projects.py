@@ -62,22 +62,10 @@ def main(input_file, output_dir, pool_size=5):
     df = pd.read_csv(input_file)
     df["output_dir"] = output_dir
 
-    records = df.to_dict("records")[:100]
-    # print(records)
-    # raise SystemExit("xx")
+    records = df.to_dict("records")
 
     with Pool(pool_size) as p:
         p.map(do_scrape, records)
-
-    raise SystemExit("xx")
-    # read authorisy name from files
-
-    # write to file
-    print("total data %d" % len(data))
-    # print(data)
-    # data = req.json()
-    # print(data)
-    # print(len(data['result']))
 
 if __name__ == "__main__":
     fire.Fire(main)
