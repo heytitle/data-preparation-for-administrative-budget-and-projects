@@ -6,7 +6,7 @@ import pandas as pd
 from multiprocessing import Pool
 
 MAX_RETRIES = 5
-LIMIT = 50
+LIMIT = 20
 URL =  "https://govspendingapi.data.go.th/api/service/cgdcontract"
 
 
@@ -40,7 +40,6 @@ def do_scrape(attr, year=2561):
     year = 2561
     data = get_all(dict(
         user_token=TOKEN,
-        keyword=province,
         year=year,
         dept_name=org_name,
         limit=LIMIT,
