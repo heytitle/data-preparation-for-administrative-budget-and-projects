@@ -7,7 +7,7 @@ import glob
 from multiprocessing import Pool
 
 MAX_RETRIES = 5
-LIMIT = 50
+LIMIT = 20
 URL =  "https://govspendingapi.data.go.th/api/service/cgdcontract"
 
 
