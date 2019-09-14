@@ -2,11 +2,12 @@ import json
 import fire
 import requests
 import pandas as pd
+import glob
 
 from multiprocessing import Pool
 
 MAX_RETRIES = 5
-LIMIT = 20
+LIMIT = 50
 URL =  "https://govspendingapi.data.go.th/api/service/cgdcontract"
 
 
@@ -35,6 +36,10 @@ def do_scrape(attr, year=2561):
     province = attr['cleaned_province']
     if not province:
         print("Skipping %s" % org_name)
+        return
+
+    if len(glob.glob('%s/%s-*' % (attr['output_dir'], org_name))) > 0:
+        print("Skiiping because we might scrape `%s` already" % org_name)
         return
 
     year = 2561
