@@ -32,7 +32,7 @@ def get_all(params, retries=0):
         return data
 
 def do_scrape(attr, year=2561):
-    org_name = attr['search_name']
+    org_name = attr['name']
 
     if len(glob.glob('%s/%s-*' % (attr['output_dir'], org_name))) > 0:
         print("Skiiping because we might scrape `%s` already" % org_name)
