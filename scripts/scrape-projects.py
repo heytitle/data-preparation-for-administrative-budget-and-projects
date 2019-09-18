@@ -33,10 +33,6 @@ def get_all(params, retries=0):
 
 def do_scrape(attr, year=2561):
     org_name = attr['search_name']
-    province = attr['cleaned_province']
-    if not province:
-        print("Skipping %s" % org_name)
-        return
 
     if len(glob.glob('%s/%s-*' % (attr['output_dir'], org_name))) > 0:
         print("Skiiping because we might scrape `%s` already" % org_name)
@@ -51,12 +47,11 @@ def do_scrape(attr, year=2561):
         offset=0
     ))
 
-    slug = "%s-%s-%s" % (org_name, province, year)
+    slug = "%s-%s" % (org_name, year)
     print("Saving file to %s (%d records)" % (slug, len(data)))
     with open("%s/%s.json" % (attr['output_dir'], slug),  "w") as f:
         output = dict(
             org=org_name,
-            province=province,
             projects=data
         )
         json.dump(data, f, ensure_ascii=False)
